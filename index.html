@@ -1,0 +1,79 @@
+<html manifest="cache.appcache">
+<head>
+<style type="text/css">
+body {
+	text-align: center;
+	
+}
+
+#speed {
+	font-size: 200px;
+}
+
+#toggle {
+	font-size: 100px;
+}
+</style>
+</head>
+<body>
+	<audio id="sound" src="bell.ogg" style="display: none;"></audio>
+	<div id="speed"></div>
+	<button id="toggle"></button>
+	<script>
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+var SPEEDS = [20, 40, 60];
+var RUNNING = false;
+var timeout = null;
+
+function flashScreen() {
+	var body = document.querySelector("body");
+	body.style['background-color'] = 'black';
+	function clear() {
+		body.style['background-color'] = null;
+	}
+
+	setTimeout(clear, 100);
+}
+
+function setSpeed() {
+	var speed = SPEEDS[getRandomInt(0, SPEEDS.length)];
+	document.getElementById("speed").innerHTML = speed;
+	flashScreen();
+	document.getElementById("sound").play();
+}
+function start() {
+	RUNNING = true;
+	document.getElementById("toggle").innerHTML = "Stop";
+	function set() {
+		if(!RUNNING) return;
+		setSpeed();
+		var duration = 20.0 + (Math.random() - 0.5)*10;
+		timeout = setTimeout(set, duration*1000);
+	}
+	set();
+}
+function stop() {
+	RUNNING = false;
+	if(timeout) {
+		clearTimeout(timeout);
+	}
+	document.getElementById("speed").innerHTML = '-';
+	document.getElementById("toggle").innerHTML = "Start";
+}
+
+function toggle() {
+	if(RUNNING) {
+		stop();
+	} else {
+		start();
+	}
+}
+stop();
+document.getElementById("toggle").addEventListener("click", toggle);
+	</script>
+</body>
+</html>
